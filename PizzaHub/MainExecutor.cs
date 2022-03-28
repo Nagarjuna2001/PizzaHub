@@ -7,7 +7,53 @@ namespace PizzaHub
     {
         static void Main(string[] args)
         {
+            IOrder order = new OrderFactory();
+            AbstractPizza pizzaTypeOrderedByCustomer = null;
+            
+            string pizzaTypeEnteredByCustomer;
+            bool pizzaTypeExceptionOccured;
+            Console.WriteLine("Please enter the pizza which you want to order :");
 
+            do
+            {
+                pizzaTypeEnteredByCustomer = Console.ReadLine();
+                pizzaTypeExceptionOccured = false;
+                try
+                {
+                    pizzaTypeOrderedByCustomer = order.GetPizzaType(pizzaTypeEnteredByCustomer);
+                }
+                catch (ArgumentException ex)
+                {
+                    pizzaTypeExceptionOccured = true;
+                    Console.WriteLine(ex.Message);
+                }
+            } while (pizzaTypeExceptionOccured);
+            
+
+            Console.WriteLine("Please provide any toppings of your choice: ");
+
+            string ToppingTypeEnteredByCustomer;
+            bool exceptionOccured;
+
+            do
+            {
+                ToppingTypeEnteredByCustomer = Console.ReadLine();
+                exceptionOccured = false;
+                try
+                {
+                    pizzaTypeOrderedByCustomer = order.GetToppingOptedByUser(ToppingTypeEnteredByCustomer, pizzaTypeOrderedByCustomer);
+                }
+                catch (ArgumentException ex)
+                {
+                    exceptionOccured = true;
+                    Console.WriteLine(ex.Message);
+                }
+            } while (exceptionOccured);
+
+
+            Console.WriteLine(pizzaTypeOrderedByCustomer.GetDescription());
+            Console.WriteLine(pizzaTypeOrderedByCustomer.GetPrice());
+/*
             //Code to buy one type of pizza.i.e.Chicken pizza and to add toppings to it dynamically by wrapping the chicken pizza object
             //with the Bacon and Cheese Wrappers.
             AbstractPizza orderChickenPizza = new ChickenPizza();
@@ -27,7 +73,7 @@ namespace PizzaHub
             AbstractPizza addExtraCheeseToPepperoniPizza = new ExtraCheese(orderPepperoniPizza);
             AbstractPizza addGreenPepperToPepperoniPizza = new GreenPepper(addExtraCheeseToPepperoniPizza);
 
-            Console.WriteLine("Price of pepperoni pizza with toppings extra Cheese and Green pepper : " + addGreenPepperToPepperoniPizza.GetPrice());
+            Console.WriteLine("Price of pepperoni pizza with toppings extra Cheese and Green pepper : " + addGreenPepperToPepperoniPizza.GetPrice());*/
         }
     }
 }
