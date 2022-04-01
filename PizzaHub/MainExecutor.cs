@@ -1,10 +1,48 @@
 ﻿using PizzaHub.Component;
+using PizzaHub.UserDefinedExceptions;
 using System;
 
 namespace PizzaHub
 {
     public class MainExecutor
     {
+        private static bool CheckUserChoiceIsValidOrNot(string choice)
+        {
+            
+            if(choice.ToLower().Equals("y") || choice.ToLower().Equals("yes"))
+            {
+                return true;
+            }
+            else if(choice.ToLower().Equals("n") || choice.ToLower().Equals("no"))
+            {
+                return false;
+            }
+            else
+            {
+                throw new ArgumentException("Please select a valid option");
+            }
+        }
+        private static bool GetInputForCustomerChoice()
+        {
+            string UserchoiceToAddTopping = "";
+            bool proceedFurther = true;
+            bool finalChoice = false; ;
+            do
+            {
+                proceedFurther = true;
+                try
+                {
+                    UserchoiceToAddTopping = Console.ReadLine();
+                    finalChoice = CheckUserChoiceIsValidOrNot(UserchoiceToAddTopping);
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    proceedFurther = false;
+                }
+            } while (!proceedFurther);
+            return finalChoice;
+        }
         static void Main(string[] args)
         {
             IOrder order = new OrderFactory();
@@ -22,7 +60,7 @@ namespace PizzaHub
                 {
                     pizzaTypeOrderedByCustomer = order.GetPizzaType(pizzaTypeEnteredByCustomer);
                 }
-                catch (ArgumentException ex)
+                catch (InvalidPizzaSelectedException ex)
                 {
                     pizzaTypeExceptionOccured = true;
                     Console.WriteLine(ex.Message);
@@ -30,33 +68,81 @@ namespace PizzaHub
             } while (pizzaTypeExceptionOccured);
             
 
-            Console.WriteLine("Please provide any toppings of your choice: ");
-
             string ToppingTypeEnteredByCustomer;
             bool exceptionOccured;
 
-            do
+           
+
+            Console.WriteLine("Do you want to add toppings along with the pizza [Y | N] : ");
+
+            while (GetInputForCustomerChoice()) 
             {
-                ToppingTypeEnteredByCustomer = Console.ReadLine();
-                exceptionOccured = false;
-                try
-                {
-                    pizzaTypeOrderedByCustomer = order.GetToppingOptedByUser(ToppingTypeEnteredByCustomer, pizzaTypeOrderedByCustomer);
-                }
-                catch (ArgumentException ex)
-                {
-                    exceptionOccured = true;
-                    Console.WriteLine(ex.Message);
-                }
-            } while (exceptionOccured);
+                Console.WriteLine("Please provide any topping of your choice: ");
 
+                do
+                {
+                    ToppingTypeEnteredByCustomer = Console.ReadLine();
+                    exceptionOccured = false;
+                    try
+                    {
+                        pizzaTypeOrderedByCustomer = order.GetToppingOptedByUser(ToppingTypeEnteredByCustomer, pizzaTypeOrderedByCustomer);
+                    }
+                    catch (InvalidToppingSelectedException ex)
+                    {
+                        exceptionOccured = true;
+                        Console.WriteLine(ex.Message);
+                    }
+                } while (exceptionOccured);
+                
+                Console.WriteLine("Do you want to add more  toppings [Y | N] : ");
 
+            } 
+
+            Console.WriteLine("Processing your order...");
+            Console.WriteLine("\n Order Summary : \n");
             Console.WriteLine(pizzaTypeOrderedByCustomer.GetDescription());
             Console.WriteLine(pizzaTypeOrderedByCustomer.GetPrice());
-/*
+
+
+
+
+            /*do
+                        {
+                            ToppingTypeEnteredByCustomer = Console.ReadLine();
+                            exceptionOccured = false;
+                            try
+                            {
+                                pizzaTypeOrderedByCustomer = order.GetToppingOptedByUser(ToppingTypeEnteredByCustomer, pizzaTypeOrderedByCustomer);
+                            }
+                            catch (InvalidToppingSelectedException ex)
+                            {
+                                exceptionOccured = true;
+                                Console.WriteLine(ex.Message);
+                                continue;
+                            }
+                            Console.WriteLine("Do you want to add more toppings [Y | N] : ");
+                            string UserchoiceToAddTopping = Console.ReadLine();
+
+                            if (CheckUserChoice(UserchoiceToAddTopping))
+                            {
+                                exceptionOccured = true;
+                                Console.WriteLine("Please provide any topping of your choice: ");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Processing your order...");
+                            }
+                        } while (exceptionOccured);*/
+
+
+
+            /*
+             * 
+             *           
+
             //Code to buy one type of pizza.i.e.Chicken pizza and to add toppings to it dynamically by wrapping the chicken pizza object
             //with the Bacon and Cheese Wrappers.
-            AbstractPizza orderChickenPizza = new ChickenPizza();
+            /*AbstractPizza orderChickenPizza = new ChickenPizza();
             Console.WriteLine("Price of chicken pizza without any toppings : " + orderChickenPizza.GetPrice());
 
             AbstractPizza addBaconToChickenPizza = new Bacon(orderChickenPizza);

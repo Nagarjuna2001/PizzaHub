@@ -1,4 +1,5 @@
 ﻿using PizzaHub.Component;
+using PizzaHub.UserDefinedExceptions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,7 +28,7 @@ namespace PizzaHub
                 return new PepperoniPizza();
             }
             else
-                throw new ArgumentException("Please select a valid and available type");
+                throw new InvalidPizzaSelectedException("Please select a valid and available Pizza type");
         }
 
         public AbstractPizza GetToppingOptedByUser(string customerEnteredToppingType,AbstractPizza pizzaType)
@@ -45,7 +46,7 @@ namespace PizzaHub
                 return new GreenPepper(pizzaType);
             }
             else
-                throw new ArgumentException("Please select a valid topping");
+                throw new InvalidToppingSelectedException("The Selected Topping is not available . Please select a valid topping");
         }
     }
 }
